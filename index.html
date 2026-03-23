@@ -18,13 +18,17 @@
 
   <!-- BANNER PRINCIPAL -->
   <section class="w-full h-[75vh] md:h-[100vh]">
-    <img
-      src="img/banner1.jpg"
-      alt="Banner principal"
-      class="w-full h-full object-cover"
-      fetchpriority="high"
-      decoding="async"
-    >
+    <picture>
+      <source media="(min-width: 768px)" srcset="img/banner1.1.jpg">
+      
+      <img
+        src="img/banner1.2.jpg"
+        alt="Banner principal"
+        class="w-full h-full object-cover"
+        fetchpriority="high"
+        decoding="async"
+      >
+    </picture>
   </section>
 
   <!-- TÍTULO + DESCRIPCIÓN -->
