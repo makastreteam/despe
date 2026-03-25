@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Pablo Bordería</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖤</text></svg>">
+  <meta name="description" content="La polivalencia definitiva de Pablo. No es postureo. Es metodología.">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&family=Oswald:wght@500;700&display=swap"
+    rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            banner: ['Oswald', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    html {
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      overflow-x: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* --- Loading screen --- */
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    #loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #loader .loader-bar {
+      width: 120px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    #loader .loader-bar-inner {
+      height: 100%;
+      width: 0%;
+      background: #fff;
+      animation: loaderFill 1.8s ease-in-out forwards;
+    }
+
+    @keyframes loaderFill {
+      to {
+        width: 100%;
+      }
+    }
+
+    /* --- Scroll-triggered animations --- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-80px);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(80px);
+      transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-scale.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* stagger children */
+    .stagger>* {
+      transition-delay: calc(var(--i, 0) * 0.12s);
+    }
+
+    /* --- Hero --- */
+    .hero-title {
+      opacity: 0;
+      transform: translateY(40px);
+      animation: heroIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 2s forwards;
+    }
+
+    .hero-subtitle {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: heroIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) 2.3s forwards;
+    }
+
+    .hero-scroll {
+      opacity: 0;
+      animation: heroIn 1s cubic-bezier(0.16, 1, 0.3, 1) 2.8s forwards;
+    }
+
+    @keyframes heroIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* scroll indicator bounce */
+    @keyframes bounce {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(8px);
+      }
+    }
+
+    .scroll-bounce {
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    /* --- Parallax banner --- */
+    .parallax-banner {
+      background-attachment: fixed;
+      background-position: center;
+      background-size: cover;
+    }
+
+    @supports (-webkit-touch-callout: none) {
+      .parallax-banner {
+        background-attachment: scroll;
+      }
+    }
+
+    /* --- Photo cards --- */
+    .photo-card {
+      overflow: hidden;
+    }
+
+    .photo-card img {
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+        filter 0.7s ease;
+    }
+
+    .photo-card:hover img {
+      transform: scale(1.05);
+      filter: brightness(1.1);
+    }
+
+    .photo-card .card-overlay {
+      transition: opacity 0.5s ease;
+    }
+
+    .photo-card:hover .card-overlay {
+      opacity: 1 !important;
+    }
+
+    /* --- Separator line animation --- */
+    .sep-line {
+      width: 0;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sep-line.visible {
+      width: 80px;
+    }
+
+    /* --- Countdown --- */
+    .countdown-digit {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* --- Gradient text --- */
+    .gradient-text {
+      background: linear-gradient(135deg, #fff 0%, #a0a0a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* --- Gold accent --- */
+    .gold-accent {
+      background: linear-gradient(90deg, transparent, #c9a84c, transparent);
+    }
+
+    /* --- List style --- */
+    .feature-list li {
+      position: relative;
+      padding-left: 1.5rem;
+    }
+
+    .feature-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.7em;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #c9a84c, #8a6d2e);
+    }
+
+    /* --- Noise texture overlay --- */
+    .noise::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+
+    /* --- Banner quote text --- */
+    .banner-quote {
+      text-shadow: 0 2px 40px rgba(0, 0, 0, 0.8), 0 0 80px rgba(0, 0, 0, 0.5);
+      letter-spacing: -0.02em;
+    }
+
+    /* --- Smooth image sections --- */
+    .img-section img {
+      transition: transform 8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .img-section.visible img {
+      transform: scale(1.04);
+    }
+  </style>
+</head>
+
+<body class="bg-black text-white noise">
+
+  <!-- LOADING SCREEN -->
+  <div id="loader">
+    <p class="font-display text-lg tracking-[0.3em] uppercase text-white/60 mb-8">Pablo Bordería.</p>
+    <div class="loader-bar">
+      <div class="loader-bar-inner"></div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- HERO -->
+  <!-- ============================================ -->
+  <section class="relative w-full h-screen overflow-hidden">
+    <picture>
+      <source media="(min-width: 768px)" srcset="img/banner1.1.jpg">
+      <img src="img/banner1.2.jpg" alt="Banner principal" class="w-full h-full object-cover scale-110"
+        style="animation: heroZoom 5s ease-in-out infinite alternate;" fetchpriority="high" decoding="async">
+    </picture>
+
+    <!-- Dark vignette -->
+    <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30"></div>
+
+    <!-- Hero content -->
+    <!--<div class="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+      <p class="hero-subtitle font-display text-sm md:text-base tracking-[0.4em] uppercase text-white/70 mb-4">Una
+        carrera sin precedentes</p>
+      <h1 class="hero-title font-display text-5xl md:text-8xl font-black leading-[0.95] max-w-5xl gradient-text">
+        Polivalencia profesional sin precedentes
+      </h1>
+      <div class="hero-subtitle w-16 h-px gold-accent mx-auto mt-8 mb-6"></div>
+      <p class="hero-subtitle font-body text-base md:text-xl text-white/60 max-w-xl font-light">
+        Pablo ofrece un abanico de servicios difícil de clasificar.
+        Si existe, probablemente puede hacerlo. Si no existe, también.
+      </p>
+    </div>-->
+
+    <!-- Scroll indicator -->
+    <!--<div class="hero-scroll absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+      <p class="text-[10px] tracking-[0.3em] uppercase text-white/40 font-body">Scroll</p>
+      <div class="scroll-bounce">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5">
+          <path d="M7 10l5 5 5-5" />
+        </svg>
+      </div>
+    </div>-->
+  </section>
+
+  <style>
+    @keyframes heroZoom {
+      0% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1.0);
+      }
+    }
+  </style>
+
+  <!-- ============================================ -->
+  <!-- INTRO TEXT -->
+  <!-- ============================================ -->
+  <section class="py-24 md:py-36 px-6 text-center bg-black relative">
+    <div class="reveal">
+      <p class="font-display text-sm tracking-[0.3em] uppercase text-white/40 mb-6">Sobre Pablo</p>
+      <h2 class="font-display text-3xl md:text-5xl font-bold mb-8 max-w-3xl mx-auto leading-tight gradient-text">
+        Polivalencia profesional sin precedentes
+      </h2>
+      <div class="w-16 h-px gold-accent mx-auto mb-8"></div>
+      <p class="text-white/50 max-w-2xl mx-auto text-lg md:text-xl leading-relaxed font-light">
+        Pablo ofrece un abanico de servicios difícil de clasificar.
+        Desde apoyo logístico en eventos hasta soluciones improvisadas
+        para situaciones que no estaban en el contrato.
+        Si existe, probablemente puede hacerlo. Si no existe, también.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- TRES FOTOS (1) -->
+  <!-- ============================================ -->
+  <section class="px-2 md:px-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 stagger">
+
+      <div class="photo-card reveal-scale relative w-full h-[75vh] md:h-[90vh] rounded-lg overflow-hidden"
+        style="--i:0">
+        <img src="img/foto1.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+        <div class="card-overlay absolute inset-0 bg-black/20 opacity-0"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+          <p class="font-display text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Servicio 01</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold">Animador de Fiestas</h2>
+        </div>
+      </div>
+
+      <div class="photo-card reveal-scale relative w-full h-[75vh] md:h-[90vh] rounded-lg overflow-hidden"
+        style="--i:1">
+        <img src="img/foto2.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+        <div class="card-overlay absolute inset-0 bg-black/20 opacity-0"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+          <p class="font-display text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Servicio 02</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold">DJ Privado</h2>
+        </div>
+      </div>
+
+      <div class="photo-card reveal-scale relative w-full h-[75vh] md:h-[90vh] rounded-lg overflow-hidden"
+        style="--i:2">
+        <img src="img/foto3.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+        <div class="card-overlay absolute inset-0 bg-black/20 opacity-0"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+          <p class="font-display text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Servicio 03</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold">Sherpa de Montaña</h2>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Separator -->
+  <div class="py-16 md:py-24 flex justify-center">
+    <div class="sep-line h-px gold-accent"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- BANNER 2 — Parallax quote -->
+  <!-- ============================================ -->
+  <section class="relative w-full h-[60vh] md:h-[80vh] overflow-hidden img-section">
+    <img src="img/banner2.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center px-6">
+      <div class="reveal">
+        <p class="font-display text-sm tracking-[0.3em] uppercase text-white/40 mb-4">Filosofía corporativa</p>
+        <h2 class="font-banner text-4xl md:text-7xl font-bold banner-quote uppercase tracking-wide">
+          No es postureo.<br>Es metodología.
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- Separator -->
+  <div class="py-16 md:py-24 flex justify-center">
+    <div class="sep-line h-px gold-accent"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- FOTO / TEXTO (1) — Gestión canina -->
+  <!-- ============================================ -->
+  <section class="overflow-hidden">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-0 min-h-screen">
+      <div class="relative h-[70vh] md:h-auto overflow-hidden img-section order-1">
+        <img src="img/foto4.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-black/30 hidden md:block"></div>
+      </div>
+      <div class="flex items-center justify-center p-8 md:p-16 order-2">
+        <div class="w-full max-w-lg reveal-right">
+          <p class="font-display text-[10px] tracking-[0.3em] uppercase text-white/40 mb-4">Servicio premium</p>
+          <h2 class="font-display text-4xl md:text-5xl font-bold mb-3 leading-tight gradient-text">
+            Gestión canina integral
+          </h2>
+          <div class="w-12 h-px gold-accent mb-6"></div>
+          <p class="text-white/50 mb-6 text-lg leading-relaxed font-light">
+            Servicio de acompañamiento premium orientado al bienestar físico,
+            emocional y existencial del animal.
+          </p>
+          <ul class="feature-list text-white/50 space-y-3 text-base leading-relaxed font-light">
+            <li>Paseo con conversación constante (el perro no responde, pero escucha)</li>
+            <li>Análisis del estado de ánimo según la forma de mover la cola</li>
+            <li>Motivación verbal durante los momentos difíciles del recorrido</li>
+            <li>Asesoramiento estratégico sobre parques, farolas y árboles clave</li>
+            <li>Gestión de silencios incómodos entre humano y can</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- TEXTO / FOTO (2) — Espiritual -->
+  <!-- ============================================ -->
+  <section class="overflow-hidden">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-0 min-h-screen">
+      <div class="relative h-[70vh] md:h-auto overflow-hidden img-section order-1 md:order-2">
+        <img src="img/foto5.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-gradient-to-l from-transparent to-black/30 hidden md:block"></div>
+      </div>
+      <div class="flex items-center justify-center p-8 md:p-16 order-2 md:order-1">
+        <div class="w-full max-w-lg reveal-left">
+          <p class="font-display text-[10px] tracking-[0.3em] uppercase text-white/40 mb-4">Servicio exclusivo</p>
+          <h2 class="font-display text-4xl md:text-5xl font-bold mb-3 leading-tight gradient-text">
+            Acompañamiento espiritual estratégico
+          </h2>
+          <div class="w-12 h-px gold-accent mb-6"></div>
+          <p class="text-white/50 mb-6 text-lg leading-relaxed font-light">
+            Servicio de orientación personal enfocado a desbloquear decisiones vitales,
+            redefinir prioridades y asentir con gravedad mientras el cliente habla.
+            No se prometen respuestas, pero sí una sensación convincente de progreso.
+          </p>
+          <ul class="feature-list text-white/50 space-y-3 text-base leading-relaxed font-light">
+            <li>Escucha activa con pausas calculadas y mirada al horizonte</li>
+            <li>Uso selectivo de frases ambiguas que parecen profundas en retrospectiva</li>
+            <li>Reformulación de dudas ajenas como si fueran revelaciones propias</li>
+            <li>Asentimientos lentos en momentos clave del discurso</li>
+            <li>Validación emocional sin asumir ningún tipo de responsabilidad</li>
+            <li>Cierre de sesión con consejo genérico pero inolvidable</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Separator -->
+  <div class="py-16 md:py-24 flex justify-center">
+    <div class="sep-line h-px gold-accent"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- BANNER 3 — Pizza -->
+  <!-- ============================================ -->
+  <section class="relative w-full h-[80vh] md:h-screen overflow-hidden img-section">
+    <img src="img/banner3.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center px-6">
+      <div class="reveal">
+        <p class="font-display text-sm tracking-[0.3em] uppercase text-white/40 mb-4">Nutrición avanzada</p>
+        <h2 class="font-banner text-4xl md:text-7xl font-bold banner-quote uppercase tracking-wide">
+          Estrategia alimentaria<br>basada en la intuición
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- Separator -->
+  <div class="py-16 md:py-24 flex justify-center">
+    <div class="sep-line h-px gold-accent"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TRES FOTOS (2) -->
+  <!-- ============================================ -->
+  <section class="px-2 md:px-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-4 stagger">
+
+      <div class="photo-card reveal-scale relative w-full h-[75vh] md:h-[90vh] rounded-lg overflow-hidden"
+        style="--i:0">
+        <img src="img/foto6.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+        <div class="card-overlay absolute inset-0 bg-black/20 opacity-0"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+          <p class="font-display text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Servicio 04</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold">Chef Michelín</h2>
+        </div>
+      </div>
+
+      <div class="photo-card reveal-scale relative w-full h-[75vh] md:h-[90vh] rounded-lg overflow-hidden"
+        style="--i:1">
+        <img src="img/foto7.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+        <div class="card-overlay absolute inset-0 bg-black/20 opacity-0"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+          <p class="font-display text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Servicio 05</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold">Hombre del Tiempo</h2>
+        </div>
+      </div>
+
+      <div class="photo-card reveal-scale relative w-full h-[75vh] md:h-[90vh] rounded-lg overflow-hidden"
+        style="--i:2">
+        <img src="img/foto8.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+        <div class="card-overlay absolute inset-0 bg-black/20 opacity-0"></div>
+        <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+          <p class="font-display text-[10px] tracking-[0.3em] uppercase text-white/50 mb-2">Servicio 06</p>
+          <h2 class="font-display text-3xl md:text-4xl font-bold">Médico de Vocación</h2>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Separator -->
+  <div class="py-16 md:py-24 flex justify-center">
+    <div class="sep-line h-px gold-accent"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- BANNER 4 — Tech -->
+  <!-- ============================================ -->
+  <section class="relative w-full h-[80vh] md:h-screen overflow-hidden img-section">
+    <img src="img/banner4.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center px-6">
+      <div class="reveal">
+        <p class="font-display text-sm tracking-[0.3em] uppercase text-white/40 mb-4">Departamento I+D</p>
+        <h2 class="font-banner text-4xl md:text-7xl font-bold banner-quote uppercase tracking-wide">
+          Innovación que nadie<br>había pedido
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- Separator -->
+  <div class="py-16 md:py-24 flex justify-center">
+    <div class="sep-line h-px gold-accent"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- FOTO / TEXTO (3) — Banco de imágenes -->
+  <!-- ============================================ -->
+  <section class="overflow-hidden">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-0 min-h-screen">
+      <div class="relative h-[70vh] md:h-auto overflow-hidden img-section order-1">
+        <img src="img/foto9.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent to-black/30 hidden md:block"></div>
+      </div>
+      <div class="flex items-center justify-center p-8 md:p-16 order-2">
+        <div class="w-full max-w-lg reveal-right">
+          <p class="font-display text-[10px] tracking-[0.3em] uppercase text-white/40 mb-4">Servicio visual</p>
+          <h2 class="font-display text-4xl md:text-5xl font-bold mb-3 leading-tight gradient-text">
+            Persona de banco de imágenes
+          </h2>
+          <div class="w-12 h-px gold-accent mb-6"></div>
+          <p class="text-white/50 mb-6 text-lg leading-relaxed font-light">
+            Presencia visual diseñada para ilustrar artículos, presentaciones y páginas web
+            sin que nadie se pregunte quién es o por qué está ahí.
+            Ideal para acompañar textos que nadie leerá completos.
+          </p>
+          <ul class="feature-list text-white/50 space-y-3 text-base leading-relaxed font-light">
+            <li>Sonrisa ambigua entre entusiasmo y confusión</li>
+            <li>Vestimenta atemporal aprobada por todos y recordada por nadie</li>
+            <li>Mirada perdida ligeramente inspiradora</li>
+            <li>Capacidad de representar múltiples profesiones sin credenciales</li>
+            <li>Uso intensivo en miniaturas, banners y mockups</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- TEXTO / FOTO (4) — Ilusionismo -->
+  <!-- ============================================ -->
+  <section class="overflow-hidden">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-0 min-h-screen">
+      <div class="relative h-[70vh] md:h-auto overflow-hidden img-section order-1 md:order-2">
+        <img src="img/foto10.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+        <div class="absolute inset-0 bg-gradient-to-l from-transparent to-black/30 hidden md:block"></div>
+      </div>
+      <div class="flex items-center justify-center p-8 md:p-16 order-2 md:order-1">
+        <div class="w-full max-w-lg reveal-left">
+          <p class="font-display text-[10px] tracking-[0.3em] uppercase text-white/40 mb-4">Servicio escénico</p>
+          <h2 class="font-display text-4xl md:text-5xl font-bold mb-3 leading-tight gradient-text">
+            Ilusionismo aplicado a entornos sociales
+          </h2>
+          <div class="w-12 h-px gold-accent mb-6"></div>
+          <p class="text-white/50 mb-6 text-lg leading-relaxed font-light">
+            Servicio de entretenimiento estratégico basado en la manipulación visual,
+            la distracción selectiva y la creación de expectativas que no se cumplirán.
+            Resultados variables. Asombro garantizado.
+          </p>
+          <ul class="feature-list text-white/50 space-y-3 text-base leading-relaxed font-light">
+            <li>Aparición y desaparición de objetos sin explicación válida</li>
+            <li>Uso intensivo de gestos amplios para desviar la atención</li>
+            <li>Generación de aplausos por motivos poco claros</li>
+            <li>Capacidad de repetir el mismo truco con resultados distintos</li>
+            <li>Salida del escenario antes de que pidan explicaciones</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Separator -->
+  <div class="py-16 md:py-24 flex justify-center">
+    <div class="sep-line h-px gold-accent"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- BANNERS FINALES — Cinematic sequence -->
+  <!-- ============================================ -->
+  <section class="relative w-full h-[80vh] md:h-screen overflow-hidden img-section">
+    <img src="img/banner5.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center px-6">
+      <div class="reveal">
+        <h2 class="font-banner text-4xl md:text-7xl font-bold banner-quote uppercase tracking-wide">
+          Modo supervivencia<br>activado
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <section class="relative w-full h-[80vh] md:h-screen overflow-hidden img-section">
+    <img src="img/banner6.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center px-6">
+      <div class="reveal">
+        <h2 class="font-banner text-4xl md:text-7xl font-bold banner-quote uppercase tracking-wide">
+          Demasiado perfecto<br>para ser casualidad
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <section class="relative w-full h-[80vh] md:h-screen overflow-hidden img-section">
+    <img src="img/banner7.jpg" class="w-full h-full object-cover" alt="" loading="lazy" decoding="async">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="absolute inset-0 flex items-center justify-center text-center px-6">
+      <div class="reveal">
+        <h2 class="font-banner text-4xl md:text-7xl font-bold banner-quote uppercase tracking-wide">
+          Éxito desproporcionado
+        </h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- CIERRE -->
+  <!-- ============================================ -->
+  <section class="pt-24 pb-10 md:pt-40 md:pb-12 px-6 text-center bg-black relative">
+    <div class="reveal">
+      <p class="font-display text-sm tracking-[0.3em] uppercase text-white/40 mb-6">Comunicado oficial</p>
+      <h2 class="font-display text-4xl md:text-6xl font-bold mb-8 gradient-text">
+        Cese de actividad
+      </h2>
+      <div class="w-16 h-px gold-accent mx-auto mb-8"></div>
+      <p class="text-white/50 max-w-2xl mx-auto text-lg md:text-xl leading-relaxed font-light">
+        Se informa del cierre inmediato y definitivo de todos los servicios
+        presentados en esta web.
+        A partir de este momento, Pablo destinará su tiempo, energía
+        y capacidad de adaptación exclusivamente a su futura esposa y Odín.
+        Gracias por acompañarnos durante esta etapa.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- COUNTDOWN -->
+  <!-- ============================================ -->
+  <section class="pt-6 pb-20 md:pt-8 md:pb-28 px-6 text-center bg-black relative">
+    <div class="reveal">
+      <h2 class="font-display text-2xl md:text-3xl font-bold mb-2 gradient-text">
+        Tiempo restante de servicio
+      </h2>
+      <p class="text-white/40 mb-10 font-light">
+        Este proyecto permanecerá activo hasta la fecha indicada.
+      </p>
+
+      <div id="countdown" class="flex justify-center gap-4 md:gap-6 text-center text-white">
+        <div class="countdown-digit rounded-xl px-5 py-6 md:px-8 md:py-8 min-w-[80px] md:min-w-[110px]">
+          <div id="days" class="font-display text-4xl md:text-6xl font-bold">–</div>
+          <div class="text-[10px] tracking-[0.2em] uppercase text-white/40 mt-2 font-body">días</div>
+        </div>
+        <div class="countdown-digit rounded-xl px-5 py-6 md:px-8 md:py-8 min-w-[80px] md:min-w-[110px]">
+          <div id="hours" class="font-display text-4xl md:text-6xl font-bold">–</div>
+          <div class="text-[10px] tracking-[0.2em] uppercase text-white/40 mt-2 font-body">horas</div>
+        </div>
+        <div class="countdown-digit rounded-xl px-5 py-6 md:px-8 md:py-8 min-w-[80px] md:min-w-[110px]">
+          <div id="minutes" class="font-display text-4xl md:text-6xl font-bold">–</div>
+          <div class="text-[10px] tracking-[0.2em] uppercase text-white/40 mt-2 font-body">min</div>
+        </div>
+        <div class="countdown-digit rounded-xl px-5 py-6 md:px-8 md:py-8 min-w-[80px] md:min-w-[110px]">
+          <div id="seconds" class="font-display text-4xl md:text-6xl font-bold">–</div>
+          <div class="text-[10px] tracking-[0.2em] uppercase text-white/40 mt-2 font-body">seg</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- FOOTER -->
+  <!-- ============================================ -->
+  <footer class="py-12 text-center px-6 border-t border-white/5">
+    <p class="text-white/20 text-sm font-light">
+      Todo lo que aparece en esta web es ficticio y creado <b class="font-bold text-white/40">con mucho cariño desde el norte, os queremos.</b>
+    </p>
+  </footer>
+
+  <!-- ============================================ -->
+  <!-- SCRIPTS -->
+  <!-- ============================================ -->
+  <script>
+    // --- Loading screen ---
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+      }, 2000);
+    });
+
+    // --- Scroll reveal (IntersectionObserver) ---
+    const revealClasses = ['reveal', 'reveal-left', 'reveal-right', 'reveal-scale', 'sep-line', 'img-section'];
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -60px 0px'
+    });
+
+    revealClasses.forEach(cls => {
+      document.querySelectorAll('.' + cls).forEach(el => observer.observe(el));
+    });
+
+    // --- Countdown ---
+    const targetDate = new Date(2026, 3, 25, 0, 0, 0);
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        document.getElementById('countdown').innerHTML = `
+          <div class="text-xl md:text-3xl font-display italic text-white/60">
+            Servicio finalizado. Gracias por su atención. VIVAN LOS NOVIOOOOS !!
+          </div>
+        `;
+        return;
+      }
+
+      const seconds = Math.floor(diff / 1000) % 60;
+      const minutes = Math.floor(diff / 1000 / 60) % 60;
+      const hours = Math.floor(diff / 1000 / 60 / 60) % 24;
+      const days = Math.floor(diff / 1000 / 60 / 60 / 24);
+
+      document.getElementById('days').textContent = days;
+      document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+      document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+      document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  </script>
+
+</body>
+
+<!--<audio id="bg-music" loop>
+  <source src="mp3/cancion.mp3" type="audio/mpeg">
+  Tu navegador no soporta el elemento de audio.
+</audio>
+
+<button id="music-control" class="fixed bottom-6 right-6 z-[100] flex items-center gap-2 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full transition-all opacity-60 hover:opacity-100">
+  <span id="music-icon" class="text-sm">🔈</span>
+  <span class="font-body text-[10px] uppercase tracking-[0.2em] text-white/70">Música: OFF</span>
+</button>
+
+<script>
+  const music = document.getElementById('bg-music');
+  const btn = document.getElementById('music-control');
+  const icon = document.getElementById('music-icon');
+  const text = btn.querySelector('span:last-child');
+
+  btn.addEventListener('click', () => {
+    if (music.paused) {
+      music.play();
+      icon.textContent = '🔊';
+      text.textContent = 'Música: ON';
+      btn.classList.add('border-[#c9a84c]'); // Toque dorado cuando suena
+    } else {
+      music.pause();
+      icon.textContent = '🔈';
+      text.textContent = 'Música: OFF';
+      btn.classList.remove('border-[#c9a84c]');
+    }
+  });
+</script>-->
+
+<audio id="bg-music" loop>
+  <source src="mp3/cancion.mp3" type="audio/mpeg">
+  Tu navegador no soporta el elemento de audio.
+</audio>
+
+<button id="music-control" class="fixed bottom-6 right-6 z-[100] flex items-center justify-center bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-full transition-all group">
+  <span id="music-icon" class="text-xl transition-all group-hover:scale-110">🖤</span>
+</button>
+
+<style>
+  @keyframes heartbeatGold {
+    0%, 100% { 
+      transform: scale(1); 
+      color: #000; /* Corazón negro */
+      filter: drop-shadow(0 0 0px rgba(201, 168, 76, 0));
+    }
+    50% { 
+      transform: scale(1.1); 
+      color: #c9a84c; /* Toque dorado */
+      filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.7)); /* Brillo dorado */
+    }
+  }
+
+  /* Clase que activa el palpitar dorado */
+  .playing-gold {
+    animation: heartbeatGold 1.2s ease-in-out infinite;
+    color: #c9a84c !important; /* Asegurar el color dorado */
+  }
+</style>
+
+<script>
+  const music = document.getElementById('bg-music');
+  const btn = document.getElementById('music-control');
+  const icon = document.getElementById('music-icon');
+
+  btn.addEventListener('click', () => {
+    if (music.paused) {
+      music.play();
+      // Activar animación dorada
+      icon.classList.add('playing-gold');
+      btn.classList.add('border-[#c9a84c]'); // Borde dorado en el botón
+      btn.title = 'Música sonando (Pausar)'; // Texto al pasar el ratón
+    } else {
+      music.pause();
+      // Volver al estado negro y pausado
+      icon.classList.remove('playing-gold');
+      btn.classList.remove('border-[#c9a84c]');
+      btn.title = 'Activar música de fondo';
+    }
+  });
+</script>
+
+</html>
