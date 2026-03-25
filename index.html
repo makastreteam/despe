@@ -830,4 +830,87 @@
 
 </body>
 
+<!--<audio id="bg-music" loop>
+  <source src="mp3/cancion.mp3" type="audio/mpeg">
+  Tu navegador no soporta el elemento de audio.
+</audio>
+
+<button id="music-control" class="fixed bottom-6 right-6 z-[100] flex items-center gap-2 bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full transition-all opacity-60 hover:opacity-100">
+  <span id="music-icon" class="text-sm">🔈</span>
+  <span class="font-body text-[10px] uppercase tracking-[0.2em] text-white/70">Música: OFF</span>
+</button>
+
+<script>
+  const music = document.getElementById('bg-music');
+  const btn = document.getElementById('music-control');
+  const icon = document.getElementById('music-icon');
+  const text = btn.querySelector('span:last-child');
+
+  btn.addEventListener('click', () => {
+    if (music.paused) {
+      music.play();
+      icon.textContent = '🔊';
+      text.textContent = 'Música: ON';
+      btn.classList.add('border-[#c9a84c]'); // Toque dorado cuando suena
+    } else {
+      music.pause();
+      icon.textContent = '🔈';
+      text.textContent = 'Música: OFF';
+      btn.classList.remove('border-[#c9a84c]');
+    }
+  });
+</script>-->
+
+<audio id="bg-music" loop>
+  <source src="mp3/cancion.mp3" type="audio/mpeg">
+  Tu navegador no soporta el elemento de audio.
+</audio>
+
+<button id="music-control" class="fixed bottom-6 right-6 z-[100] flex items-center justify-center bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 p-3 rounded-full transition-all group">
+  <span id="music-icon" class="text-xl transition-all group-hover:scale-110">🖤</span>
+</button>
+
+<style>
+  @keyframes heartbeatGold {
+    0%, 100% { 
+      transform: scale(1); 
+      color: #000; /* Corazón negro */
+      filter: drop-shadow(0 0 0px rgba(201, 168, 76, 0));
+    }
+    50% { 
+      transform: scale(1.1); 
+      color: #c9a84c; /* Toque dorado */
+      filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.7)); /* Brillo dorado */
+    }
+  }
+
+  /* Clase que activa el palpitar dorado */
+  .playing-gold {
+    animation: heartbeatGold 1.2s ease-in-out infinite;
+    color: #c9a84c !important; /* Asegurar el color dorado */
+  }
+</style>
+
+<script>
+  const music = document.getElementById('bg-music');
+  const btn = document.getElementById('music-control');
+  const icon = document.getElementById('music-icon');
+
+  btn.addEventListener('click', () => {
+    if (music.paused) {
+      music.play();
+      // Activar animación dorada
+      icon.classList.add('playing-gold');
+      btn.classList.add('border-[#c9a84c]'); // Borde dorado en el botón
+      btn.title = 'Música sonando (Pausar)'; // Texto al pasar el ratón
+    } else {
+      music.pause();
+      // Volver al estado negro y pausado
+      icon.classList.remove('playing-gold');
+      btn.classList.remove('border-[#c9a84c]');
+      btn.title = 'Activar música de fondo';
+    }
+  });
+</script>
+
 </html>
