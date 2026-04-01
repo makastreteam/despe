@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playlist Oficial | Pablo Bordería</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            banner: ['Oswald', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #000; color: #fff; overflow-x: hidden; }
+    .noise::after {
+      content: ''; position: fixed; inset: 0; z-index: 9998; pointer-events: none; opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+    .gold-accent { background: linear-gradient(90deg, transparent, #c9a84c, transparent); }
+    .gradient-text {
+      background: linear-gradient(135deg, #fff 0%, #a0a0a0 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .song-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      transition: all 0.3s ease;
+    }
+    .song-card:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(201, 168, 76, 0.5);
+      transform: translateY(-2px);
+    }
+    .reveal { opacity: 0; transform: translateY(20px); transition: all 0.6s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    
+    .category-title {
+        border-left: 2px solid #c9a84c;
+        padding-left: 1rem;
+        margin-top: 3rem;
+        margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+
+<body class="noise">
+
+  <nav class="p-6 md:p-10 sticky top-0 z-[100] bg-black/50 backdrop-blur-md">
+    <a href="index.html" class="font-display text-xs tracking-[0.4em] uppercase text-white/40 hover:text-white transition-colors flex items-center gap-2">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Volver al inicio
+    </a>
+  </nav>
+
+  <header class="py-12 px-6 text-center">
+    <div class="reveal">
+      <p class="font-display text-sm tracking-[0.3em] uppercase text-white/40 mb-4">Discografía Exclusiva</p>
+      <h1 class="font-display text-5xl md:text-7xl font-bold gradient-text mb-6">El Sonido de Pablo</h1>
+      <div class="w-24 h-px gold-accent mx-auto"></div>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 pb-32">
+    <div id="playlist-container">
+      </div>
+  </main>
+
+  <footer class="py-12 text-center px-6 border-t border-white/5">
+    <p class="text-white/20 text-sm font-light">
+      Todo lo que aparece en esta web es ficticio y creado <b class="font-bold text-white/40">con mucho cariño desde el norte, os queremos.</b>
+    </p>
+  </footer>
+
+  <script>
+    // Configuración de las canciones
+    const categorias = [
+      { nombre: "Chill", prefix: "[Chill] Pablo Bordería", count: 8 },
+      { nombre: "Dance", prefix: "[Dance] Pablo Bordería", count: 10 },
+      { nombre: "Dubstep", prefix: "[Dubstep] Pablo Bordería", count: 2 },
+      { nombre: "Funk", prefix: "[Funk] Pablo Bordería", count: 4 },
+      { nombre: "Hardcore", prefix: "[Hardcore] Pablo Bordería", count: 4 },
+      { nombre: "Reggaeton", prefix: "[Reggaeton] Pablo Bordería", count: 6 },
+      { nombre: "Saeta", prefix: "[Saeta] Pablo Bordería", count: 2 },
+      { nombre: "Slow Techno", prefix: "[Slow Techno] Pablo Bordería", count: 4 },
+      { nombre: "Techno", prefix: "[Techno] Pablo Bordería", count: 4 },
+      { nombre: "Tralla", prefix: "[Tralla] Pablo Bordería", count: 12 }
+    ];
+
+    const container = document.getElementById('playlist-container');
+
+    // Función para generar el HTML
+    categorias.forEach(cat => {
+      // Título de categoría
+      const section = document.createElement('div');
+      section.innerHTML = `<h2 class="category-title font-display text-2xl uppercase tracking-widest text-white/80 reveal">${cat.nombre}</h2>`;
+      
+      const grid = document.createElement('div');
+      grid.className = "grid grid-cols-1 md:grid-cols-2 gap-4";
+
+      for (let i = 1; i <= cat.count; i++) {
+        const fileName = `${cat.prefix} ${i}.mp3`;
+        const songId = `audio-${cat.nombre.replace(/\s+/g, '')}-${i}`;
+        
+        grid.innerHTML += `
+          <div class="song-card p-5 rounded-xl reveal">
+            <div class="flex items-center justify-between gap-4">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <div class="flex-shrink-0 w-10 h-10 bg-white/5 rounded-full flex items-center justify-center text-lg">🎵</div>
+                <div class="overflow-hidden">
+                  <h3 class="font-medium text-white truncate text-sm md:text-base">${cat.prefix} ${i}</h3>
+                  <p class="text-[10px] text-white/30 uppercase tracking-[0.2em]">Original Mix</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-2">
+                <audio id="${songId}" src="canciones/${encodeURIComponent(fileName)}"></audio>
+                <button onclick="togglePlay('${songId}', this)" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-[#c9a84c] hover:text-black transition-all">
+                  <span class="play-icon text-xs">▶</span>
+                </button>
+                <a href="canciones/${encodeURIComponent(fileName)}" download class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all" title="Descargar">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      section.appendChild(grid);
+      container.appendChild(section);
+    });
+
+    // Control del reproductor
+    function togglePlay(id, btn) {
+      const audio = document.getElementById(id);
+      const icon = btn.querySelector('.play-icon');
+      
+      document.querySelectorAll('audio').forEach(a => {
+        if (a.id !== id) {
+          a.pause();
+          const otherBtn = a.parentElement.querySelector('.play-icon');
+          if(otherBtn) otherBtn.textContent = '▶';
+        }
+      });
+
+      if (audio.paused) {
+        audio.play();
+        icon.textContent = '⏸';
+      } else {
+        audio.pause();
+        icon.textContent = '▶';
+      }
+    }
+
+    // Animaciones de scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
